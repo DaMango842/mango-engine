@@ -18,6 +18,8 @@ set(CXX_EXTENSIONS OFF)
 
 find_package(sdl3 CONFIG REQUIRED)
 find_package(sdl3_ttf REQUIRED)
+find_package(sdl3_image REQUIRED)
+find_package(sdl3_mixer REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 
 add_executable(MangoEngine 
@@ -42,6 +44,8 @@ target_include_directories(MangoEngine PRIVATE
 target_link_libraries(MangoEngine 
     SDL3::SDL3
     SDL3_ttf::SDL3_ttf
+    SDL3_image::SDL3_image
+    SDL3_mixer::SDL3_mixer
     OpenAL::OpenAL
 )
 

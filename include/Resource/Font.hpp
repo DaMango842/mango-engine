@@ -20,7 +20,7 @@ namespace mango_engine {
 			Font(const std::string& fontPath, int size = 20);
 			~Font() = default;
 
-			TTF_Font* get() const { return m_font.get(); }
+			TTF_Font* GetRaw() const { return m_font.get(); }
 
 		private:
 			std::unique_ptr<TTF_Font, TTF_FontDeleter> m_font{nullptr};
