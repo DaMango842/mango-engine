@@ -22,8 +22,8 @@ namespace mango_engine {
 
             void clear(const Color& color) override;
 
-            void drawTexture(const std::string& texturePath, 
-                const Utils::Vector2& position, const Utils::Vector2& scale = { 1, 1 }, float rotation = 0.0f) override;
+            void drawTexture(const Resource::Texture::Ptr& texture, const Utils::Vector2& position,
+                const Utils::Vector2& scale = { 1, 1 }, float rotation = 0.0f, const SDL_FRect* clip = nullptr) override;
 
             void drawRect(const Utils::Vector2& position, const Utils::Vector2& size,
                 const Color& color, float rotation = 0.0f) override;
@@ -40,7 +40,8 @@ namespace mango_engine {
                 const std::string& font, int fontSize = 16, float strokeWidth = 1.0f) override;
             
         private:
-            SDL_Renderer* m_renderer = nullptr; 
+            SDL_Renderer* m_renderer{nullptr};
+            
         };
     }
 }

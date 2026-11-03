@@ -73,9 +73,17 @@ namespace mango_engine {
             SDL_RenderLine(m_renderer, start.x, start.y, end.x, end.y);
         }
         
-        void SDLRenderer::drawTexture(const std::string& texturePath,
-            const Utils::Vector2& position, const Utils::Vector2& scale, float rotation) {
-            
+        void SDLRenderer::drawTexture(const Resource::Texture::Ptr& texture, const Utils::Vector2& position,
+            const Utils::Vector2& scale, float rotation, const SDL_FRect* clip) {
+                if (!m_renderer || !texture) return;
+
+                SDL_FRect dstRect;
+                dstRect.x = position.x;
+                dstRect.y = position.y;
+                dstRect.w = texture->GetWidth() * scale.x;
+                dstRect.h = texture->GetHeight() * scale.y;
+
+                SDL_RenderTexture(m_renderer, texture->GetRaw(), clip, &dstRect); 
         }
 
         void SDLRenderer::drawText(const std::string& text, const Utils::Vector2& position, const Color& color,

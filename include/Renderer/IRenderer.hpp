@@ -1,6 +1,7 @@
 // include/Renderer/IRenderer.hpp
 #pragma once
 #include <Utils/Vector2.hpp>
+#include <Resource/Texture.hpp>
 #include <string>
 
 namespace mango_engine {
@@ -23,8 +24,8 @@ namespace mango_engine {
             virtual void clear(const Color& color) = 0;
 
             // 2D 渲染接口
-            virtual void drawTexture(const std::string& texturePath, const Utils::Vector2& position,
-                const Utils::Vector2& scale = { 1, 1 }, float rotation = 0.0f) = 0;
+            virtual void drawTexture(const Resource::Texture::Ptr& texture, const Utils::Vector2& position,
+                const Utils::Vector2& scale = { 1, 1 }, float rotation = 0.0f, const SDL_FRect* clip = nullptr) = 0;
 
             virtual void drawRect(const Utils::Vector2& position, const Utils::Vector2& size,
                 const Color& color, float rotation = 0.0f) = 0;
