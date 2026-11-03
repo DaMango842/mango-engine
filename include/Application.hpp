@@ -23,8 +23,14 @@ namespace mango_engine {
         void InitScene() {
             // 初始化游戏对象
             m_gameObjects.emplace_back(Utils::Vector2{ 100.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 1.0f, 0.0f, 0.0f, 1.0f }, 300.0f);
-            m_gameObjects.emplace_back(Utils::Vector2{ 300.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 0.0f, 1.0f, 0.0f, 1.0f }, 500.0f);
-            m_gameObjects.emplace_back(Utils::Vector2{ 500.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 0.0f, 0.0f, 1.0f, 1.0f }, 100.0f);
+            // m_gameObjects.emplace_back(Utils::Vector2{ 300.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 0.0f, 1.0f, 0.0f, 1.0f }, 500.0f);
+            // m_gameObjects.emplace_back(Utils::Vector2{ 500.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 0.0f, 0.0f, 1.0f, 1.0f }, 100.0f);
+
+            auto playerTex = Resource::Texture::LoadFromFile(m_renderer.GetRaw(), "assets/images/testChar.png");
+
+            if (playerTex) {
+                m_gameObjects[0].SetTexture(playerTex);
+            }
         }
 
         void Run() {
@@ -79,10 +85,6 @@ namespace mango_engine {
         std::vector<Scene::GameObject> m_gameObjects; // 游戏对象列表
 
         bool m_Running{false};
-
-        float m_RectX = 100.0f;
-        float m_RectY = 100.0f;
-        float m_MoveSpeed = 300.0f; // 每秒移动的像素数
 
     };
 }

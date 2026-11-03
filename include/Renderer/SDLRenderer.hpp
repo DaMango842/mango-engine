@@ -38,7 +38,12 @@ namespace mango_engine {
             void drawStrokeText(const std::string& text, const Utils::Vector2& position,
                 const Color& fillColor, const Color& strokeColor,
                 const std::string& font, int fontSize = 16, float strokeWidth = 1.0f) override;
+
             
+            SDL_Renderer* GetRaw() const { return m_renderer; }
+            
+        private:
+            void setDrawColor(const Color& color);
         private:
             SDL_Renderer* m_renderer{nullptr};
             

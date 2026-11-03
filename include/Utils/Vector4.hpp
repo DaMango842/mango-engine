@@ -104,4 +104,4 @@ namespace mango_engine {
             Vector3 xyz() const { return { x, y, z }; }
         };
     } // namespace Utils
-} // namespace MangoEngine
+} // namespace mango_engine

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 
 #include <string>
@@ -32,6 +33,7 @@ namespace mango_engine {
 
             SDL_Texture* GetRaw() const { return m_texture.get(); }
 
+            static Ptr LoadFromFile(SDL_Renderer* renderer, const std::string& path);
         private:
             std::unique_ptr<SDL_Texture, SDL_TextureDeleter> m_texture{nullptr};
             int m_width{0};

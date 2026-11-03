@@ -43,4 +43,4 @@ namespace mango_engine {
             
         };
 	} // namespace Renderer
-} // namespace MangoEngine
+} // namespace mango_engine

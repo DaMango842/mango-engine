@@ -112,4 +112,4 @@ namespace mango_engine {
             static const Vector3 forward;
         };
     } // namespace Utils
-} // namespace MangoEngine
+} // namespace mango_engine

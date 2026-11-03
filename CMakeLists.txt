@@ -13,25 +13,22 @@ project(MangoEngine LANGUAGES C CXX)
 # endif()
 
 set(CMAKE_CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
-set(CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(sdl3 CONFIG REQUIRED)
-find_package(sdl3_ttf REQUIRED)
-find_package(sdl3_image REQUIRED)
-find_package(sdl3_mixer REQUIRED)
-find_package(OpenAL CONFIG REQUIRED)
+find_package(SDL3       CONFIG REQUIRED)
+find_package(SDL3_ttf   CONFIG REQUIRED)
+find_package(SDL3_image CONFIG REQUIRED)
+find_package(SDL3_mixer CONFIG REQUIRED)
+find_package(OpenAL     CONFIG REQUIRED)
 
-add_executable(MangoEngine 
-    src/main.cpp 
-    "src/Resource/Font.cpp"
-    "include/Utils/MangoPtr_SDL.h"
-    "include/Audio/MangoAudio.h" 
-    "include/Audio/AudioBuffer.h"
-    "include/Loader/AudioLoader.h" 
-    "include/Loader/IAudioLoader.h"
-    src/Renderer/SDLRenderer.cpp
+# 1. 自动扫描 src 目录下的所有 .cpp 文件
+file(GLOB_RECURSE MANGO_SOURCES CONFIGURE_DEPENDS 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
+
+# 2. 直接把扫描出来的列表丢给可执行文件
+add_executable(MangoEngine ${MANGO_SOURCES})
 
 if (MSVC)
     target_compile_options(MangoEngine PRIVATE /utf-8)
@@ -50,18 +47,11 @@ target_link_libraries(MangoEngine
 )
 
 
-add_custom_command(TARGET MangoEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "$<TARGET_FILE_DIR:SDL3::SDL3>/SDL3.dll"
-        $<TARGET_FILE_DIR:MangoEngine>
-    COMMENT "Copying SDL3.dll to output directory..."
-)
-
-# OpenAL
-
-add_custom_command(TARGET MangoEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "$<TARGET_FILE_DIR:OpenAL::OpenAL>/OpenAL32.dll"
-        $<TARGET_FILE_DIR:MangoEngine>
-    COMMENT "Copying OpenAL32.dll to output directory..."
-)
+if (WIN32)
+    add_custom_command(TARGET MangoEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:MangoEngine>
+            $<TARGET_FILE_DIR:MangoEngine>
+        COMMAND_EXPAND_LISTS
+        COMMENT "Copying runtime DLLs to output directory...")
+endif()
