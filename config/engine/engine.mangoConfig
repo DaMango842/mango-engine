@@ -1,0 +1,19 @@
+# Mango Engine Config
+# This file is used to configure the Mango Engine. It is loaded by the engine at startup.
+
+[Engine Setttings]
+[General]
+window_name : "Mango Engine"
+window_width : 800
+window_height : 600
+window_fullscreen : false
+window_vsync : true
+window_resizable : true
+window_icon : "assets/icon.png"
+
+[Export]
+export_path : "build/"
+
+[App]
+name : "Game"
+package : "com.damango842.mangoengine.game"
