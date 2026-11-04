@@ -5,6 +5,7 @@
 #include <Utils/MangoPtr_SDL.h>
 #include <Renderer/SDLRenderer.hpp>
 #include <Scene/GameObject.hpp>
+#include <Scene/LevelLoader.hpp>
 
 namespace mango_engine {
     class Application {
@@ -21,15 +22,12 @@ namespace mango_engine {
         }
 
         void InitScene() {
-            // 初始化游戏对象
-            m_gameObjects.emplace_back(Utils::Vector2{ 100.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 1.0f, 0.0f, 0.0f, 1.0f }, 300.0f);
-            // m_gameObjects.emplace_back(Utils::Vector2{ 300.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 0.0f, 1.0f, 0.0f, 1.0f }, 500.0f);
-            // m_gameObjects.emplace_back(Utils::Vector2{ 500.f, 100.f }, Utils::Vector2{ 50.f, 50.f }, Renderer::Color{ 0.0f, 0.0f, 1.0f, 1.0f }, 100.0f);
+            m_gameObjects.clear();
 
             auto playerTex = Resource::Texture::LoadFromFile(m_renderer.GetRaw(), "assets/images/testChar.png");
 
-            if (playerTex) {
-                m_gameObjects[0].SetTexture(playerTex);
+            if (!Scene::LevelLoader::LoadLevel("assets/level.json", m_gameObjects, playerTex)) {
+                SDL_Log("Failed to load level!");
             }
         }
 

@@ -1,0 +1,22 @@
+{
+    "name": "Level 1",
+    "player": {
+        "texturePath": "assets/images/testChar.png",
+        "position": { "x": 100.0, "y": 100.0 },
+        "speed": 200.0
+    },
+    "enemies": [
+        {
+            "position": { "x": 400.0, "y": 300.0 },
+            "size": { "x": 50.0, "y": 50.0 },
+            "color": { "r": 1.0, "g": 0.0, "b": 0.0, "a": 1.0 },
+            "speed": 100.0
+        },
+        {
+            "position": { "x": 600.0, "y": 200.0 },
+            "size": { "x": 50.0, "y": 50.0 },
+            "color": { "r": 0.0, "g": 0.0, "b": 1.0, "a": 1.0 },
+            "speed": 150.0
+        }
+    ]
+}

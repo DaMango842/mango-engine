@@ -21,6 +21,7 @@ find_package(SDL3_ttf   CONFIG REQUIRED)
 find_package(SDL3_image CONFIG REQUIRED)
 find_package(SDL3_mixer CONFIG REQUIRED)
 find_package(OpenAL     CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 # 1. 自动扫描 src 目录下的所有 .cpp 文件
 file(GLOB_RECURSE MANGO_SOURCES CONFIGURE_DEPENDS 
@@ -44,6 +45,7 @@ target_link_libraries(MangoEngine
     SDL3_image::SDL3_image
     SDL3_mixer::SDL3_mixer
     OpenAL::OpenAL
+    nlohmann_json::nlohmann_json
 )
 
 
