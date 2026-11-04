@@ -6,6 +6,7 @@
 #include <Renderer/SDLRenderer.hpp>
 #include <Scene/GameObject.hpp>
 #include <Scene/LevelLoader.hpp>
+#include <Utils/FPSCounter.hpp>
 
 namespace mango_engine {
     class Application {
@@ -42,6 +43,9 @@ namespace mango_engine {
                 lastTime = currentTime;
 
                 ProcessInput(&event);
+
+                m_fpsCounter.Update();
+
                 Update(deltaTime);
                 Render();
             }
@@ -72,6 +76,10 @@ namespace mango_engine {
                 obj.Draw(m_renderer);
             }
 
+            std::string fontPath = "C:\\Windows\\Fonts\\msyh.ttc"; // 替换为实际字体路径
+
+            m_renderer.drawText(m_fpsCounter.GetDisplayString(), { 10.0f, 10.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, fontPath, 24);
+
             m_renderer.endFrame();
         }
     
@@ -79,6 +87,8 @@ namespace mango_engine {
         decltype(make_sdl_window("", 0, 0, 0)) m_window;
         // decltype(make_sdl_renderer(nullptr, nullptr)) m_renderer;
         Renderer::SDLRenderer m_renderer;
+
+        Utils::FPSCounter m_fpsCounter;
 
         std::vector<Scene::GameObject> m_gameObjects; // 游戏对象列表
 
