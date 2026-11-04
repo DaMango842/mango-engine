@@ -1,7 +1,11 @@
 #include "Renderer/SDLRenderer.hpp"
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
+
+
 #include <vector>
 #include <iostream>
+
 
 namespace mango_engine {
     namespace Renderer {
@@ -113,14 +117,105 @@ namespace mango_engine {
         }
 
         void SDLRenderer::drawText(const std::string& text, const Utils::Vector2& position, const Color& color,
-            const std::string& font, int fontSize) {
+            const std::string& fontPath, int fontSize) {
+            if (!m_renderer || text.empty()) return;
+
+            std::string fontKey = fontPath + "_" + std::to_string(fontSize);
+
+            if (m_fontCache.find(fontKey) == m_fontCache.end()) {
+                m_fontCache[fontKey] = std::make_shared<Resource::Font>(fontPath, fontSize);
+            }
+            auto font = m_fontCache[fontKey];
+
+            std::string textKey = text + "_" + std::to_string(color.r) + std::to_string(color.g) + 
+                                std::to_string(color.b) + "_" + fontKey;
             
+            SDL_Texture* texture = nullptr;
+            float texW = 0, texH = 0;
+
+            if (m_textCache.find(textKey) == m_textCache.end()) {
+                SDL_Color sdlColor = { 
+                    static_cast<Uint8>(color.r * 255), static_cast<Uint8>(color.g * 255), 
+                    static_cast<Uint8>(color.b * 255), static_cast<Uint8>(color.a * 255) 
+                };
+
+                SDL_Surface* surface = TTF_RenderText_Blended(font->GetRaw(), text.c_str(), 0, sdlColor);
+                if (surface) {
+                    texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+                    texW = static_cast<float>(surface->w);
+                    texH = static_cast<float>(surface->h);
+                    SDL_DestroySurface(surface);
+
+                    m_textCache[textKey] = texture;
+                } else {
+                    SDL_Log("Failed to render text surface: %s", SDL_GetError());
+                    return;
+                }
+            } else {
+                texture = m_textCache[textKey];
+                if (!SDL_GetTextureSize(texture, &texW, &texH)) {
+                    SDL_Log("Failed to get texture size: %s", SDL_GetError());
+                    return;
+                }
+            }
+
+            SDL_FRect dstRect = { position.x, position.y, texW, texH };
+            SDL_RenderTexture(m_renderer, texture, nullptr, &dstRect);   
         }
 
         void SDLRenderer::drawStrokeText(const std::string& text, const Utils::Vector2& position,
             const Color& fillColor, const Color& strokeColor,
-            const std::string& font, int fontSize, float strokeWidth) {
-            
+            const std::string& fontPath, int fontSize, float strokeWidth) {
+            if (!m_renderer || text.empty()) return;
+
+            std::string fontKey = fontPath + "_" + std::to_string(fontSize);
+            if (m_fontCache.find(fontKey) == m_fontCache.end()) {
+                m_fontCache[fontKey] = std::make_shared<Resource::Font>(fontPath, fontSize);
+            }
+            auto font = m_fontCache[fontKey];
+
+            TTF_SetFontOutline(font->GetRaw(), static_cast<int>(strokeWidth));
+            SDL_Color sdlStrokeColor = {            
+                static_cast<Uint8>(strokeColor.r * 255), static_cast<Uint8>(strokeColor.g * 255),
+                static_cast<Uint8>(strokeColor.b * 255), static_cast<Uint8>(strokeColor.a * 255)
+            };
+            SDL_Surface* strokeSurface = TTF_RenderText_Blended(font->GetRaw(), text.c_str(), 0, sdlStrokeColor);
+
+            TTF_SetFontOutline(font->GetRaw(), 0);
+
+            SDL_Color sdlFillColor = {
+                static_cast<Uint8>(fillColor.r * 255), static_cast<Uint8>(fillColor.g * 255),
+                static_cast<Uint8>(fillColor.b * 255), static_cast<Uint8>(fillColor.a * 255)
+            };
+            SDL_Surface* fillSurface = TTF_RenderText_Blended(font->GetRaw(), text.c_str(), 0, sdlFillColor);
+
+            if (strokeSurface && fillSurface) {
+                SDL_Texture* strokeTex = SDL_CreateTextureFromSurface(m_renderer, strokeSurface);
+                SDL_Texture* fillTex = SDL_CreateTextureFromSurface(m_renderer, fillSurface);
+                
+                float strokeW = static_cast<float>(strokeSurface->w);
+                float strokeH = static_cast<float>(strokeSurface->h);
+                float fillW = static_cast<float>(fillSurface->w);
+                float fillH = static_cast<float>(fillSurface->h);
+
+                float offsetX = (strokeW - fillW) / 2.0f;
+                float offsetY = (strokeH - fillH) / 2.0f;
+
+                SDL_FRect strokeRect = { position.x, position.y, strokeW, strokeH };
+                SDL_FRect fillRect = { position.x + offsetX, position.y + offsetY, fillW, fillH };
+
+                SDL_RenderTexture(m_renderer, strokeTex, nullptr, &strokeRect);
+                SDL_RenderTexture(m_renderer, fillTex, nullptr, &fillRect);
+
+                SDL_DestroyTexture(strokeTex);
+                SDL_DestroyTexture(fillTex);
+            } else {
+                SDL_Log("Failed to render text surfaces: %s", SDL_GetError());
+            }
+
+            if (strokeSurface) SDL_DestroySurface(strokeSurface);
+            if (fillSurface) SDL_DestroySurface(fillSurface);
+
         }
 
         void SDLRenderer::setDrawColor(const Color& color) {
