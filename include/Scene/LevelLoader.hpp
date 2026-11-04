@@ -29,6 +29,7 @@ namespace mango_engine {
                     float pSpeed = playerData["speed"];
                     
                     GameObject player(Utils::Vector2{px, py}, Utils::Vector2{50.0f, 50.0f}, Renderer::Color{0.0f, 1.0f, 0.0f, 1.0f}, pSpeed);
+                    player.isPlayer = true; // 标记为玩家对象
                     if (playerTexture) {
                         player.SetTexture(playerTexture);
                     }

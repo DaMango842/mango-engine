@@ -47,26 +47,28 @@ namespace mango_engine {
                 bool isMoving = false;
 
                 // 优先级判定：先判断垂直，再判断水平，防止同时按出对角线导致方向闪烁
-                if (keyStates[SDL_SCANCODE_W] || keyStates[SDL_SCANCODE_UP]) {
-                    m_position.y -= speed * deltaTime; 
-                    m_direction = Direction::Up; 
-                    isMoving = true;
-                } 
-                else if (keyStates[SDL_SCANCODE_S] || keyStates[SDL_SCANCODE_DOWN]) {
-                    m_position.y += speed * deltaTime; 
-                    m_direction = Direction::Down; 
-                    isMoving = true;
-                }
+                if (isPlayer) { // 只有玩家对象才响应输入
+                    if (keyStates[SDL_SCANCODE_W] || keyStates[SDL_SCANCODE_UP]) {
+                        m_position.y -= speed * deltaTime; 
+                        m_direction = Direction::Up; 
+                        isMoving = true;
+                    } 
+                    else if (keyStates[SDL_SCANCODE_S] || keyStates[SDL_SCANCODE_DOWN]) {
+                        m_position.y += speed * deltaTime; 
+                        m_direction = Direction::Down; 
+                        isMoving = true;
+                    }
 
-                if (keyStates[SDL_SCANCODE_A] || keyStates[SDL_SCANCODE_LEFT]) {
-                    m_position.x -= speed * deltaTime; 
-                    m_direction = Direction::Left; 
-                    isMoving = true;
-                } 
-                else if (keyStates[SDL_SCANCODE_D] || keyStates[SDL_SCANCODE_RIGHT]) {
-                    m_position.x += speed * deltaTime; 
-                    m_direction = Direction::Right; 
-                    isMoving = true;
+                    if (keyStates[SDL_SCANCODE_A] || keyStates[SDL_SCANCODE_LEFT]) {
+                        m_position.x -= speed * deltaTime; 
+                        m_direction = Direction::Left; 
+                        isMoving = true;
+                    } 
+                    else if (keyStates[SDL_SCANCODE_D] || keyStates[SDL_SCANCODE_RIGHT]) {
+                        m_position.x += speed * deltaTime; 
+                        m_direction = Direction::Right; 
+                        isMoving = true;
+                    }
                 }
 
                 // 【核心】根据移动状态 + 当前方向，拼接动画名字
@@ -104,7 +106,11 @@ namespace mango_engine {
         public:
             void SetTexture(const Resource::Texture::Ptr& tex) { m_texture = tex; }
             Resource::Texture::Ptr GetTexture() const { return m_texture; }
-
+            
+            
+        public:
+            bool isPlayer = false; // 【新增】标记是否为玩家对象
+            
         private:
             Resource::Texture::Ptr m_texture{nullptr};
             Utils::Vector2 m_position;
@@ -117,6 +123,8 @@ namespace mango_engine {
 
             int columns{4};
             int rows{4};
+
+            
         };
     }
 }
