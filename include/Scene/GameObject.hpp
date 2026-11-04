@@ -86,7 +86,12 @@ namespace mango_engine {
                 m_animator.Update(deltaTime);
             }
 
-            void Draw(Renderer::IRenderer& renderer) {
+            void Draw(Renderer::IRenderer& renderer, const Utils::Vector2& cameraOffset = {0, 0}) {
+                Utils::Vector2 screenPos = {
+                    m_position.x - cameraOffset.x,
+                    m_position.y - cameraOffset.y
+                };
+
                 if (m_texture) {
                     float frameW = static_cast<float>(m_texture->GetWidth()) / columns;
                     float frameH = static_cast<float>(m_texture->GetHeight()) / rows;
@@ -97,9 +102,9 @@ namespace mango_engine {
 
                     SDL_FRect clip = { col * frameW, row * frameH, frameW, frameH };
 
-                    renderer.drawTexture(m_texture, m_position, { 1.0f, 1.0f }, 0.0f, &clip);
+                    renderer.drawTexture(m_texture, screenPos, { 1.0f, 1.0f }, 0.0f, &clip);
                 } else {
-                    renderer.drawRect(m_position, m_size, m_color);
+                    renderer.drawRect(screenPos, m_size, m_color);
                 }
             }
         
@@ -107,10 +112,19 @@ namespace mango_engine {
             void SetTexture(const Resource::Texture::Ptr& tex) { m_texture = tex; }
             Resource::Texture::Ptr GetTexture() const { return m_texture; }
             
+            void SetPosition(const Utils::Vector2& pos) { m_position = pos; }
+            Utils::Vector2 GetPosition() const { return m_position; }
+
+            void SetSize(const Utils::Vector2& sz) { m_size = sz; }
+            Utils::Vector2 GetSize() const { return m_size; }
+
+            
+            
+            
             
         public:
             bool isPlayer = false; // 【新增】标记是否为玩家对象
-            
+
         private:
             Resource::Texture::Ptr m_texture{nullptr};
             Utils::Vector2 m_position;

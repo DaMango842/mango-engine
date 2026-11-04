@@ -7,6 +7,7 @@
 #include <Scene/GameObject.hpp>
 #include <Scene/LevelLoader.hpp>
 #include <Utils/FPSCounter.hpp>
+#include <Scene/Camera.hpp>
 
 namespace mango_engine {
     class Application {
@@ -61,8 +62,13 @@ namespace mango_engine {
         void Update(float deltaTime) {
             // 游戏逻辑更新
             const bool* keyStates = SDL_GetKeyboardState(nullptr);
+
             for (auto& obj : m_gameObjects) {
                 obj.Update(deltaTime, keyStates);
+            }
+
+            if (!m_gameObjects.empty()) {
+                m_camera.Follow(m_gameObjects[0].GetPosition(), deltaTime);
             }
             
         }
@@ -71,9 +77,11 @@ namespace mango_engine {
             m_renderer.beginFrame();
             m_renderer.clear({ 0.1f, 0.1f, 0.1f, 1.0f });
 
+            Utils::Vector2 camOffset = m_camera.GetPosition();
+
             // 绘制内容
             for (auto& obj : m_gameObjects) {
-                obj.Draw(m_renderer);
+                obj.Draw(m_renderer, camOffset);
             }
 
             std::string fontPath = "C:\\Windows\\Fonts\\msyh.ttc"; // 替换为实际字体路径
@@ -89,7 +97,8 @@ namespace mango_engine {
         Renderer::SDLRenderer m_renderer;
 
         Utils::FPSCounter m_fpsCounter;
-
+        
+        Scene::Camera m_camera{ 800.0f, 600.0f };
         std::vector<Scene::GameObject> m_gameObjects; // 游戏对象列表
 
         bool m_Running{false};
