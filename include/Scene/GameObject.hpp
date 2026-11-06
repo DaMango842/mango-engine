@@ -5,6 +5,7 @@
 #include <Resource/Texture.hpp>
 #include <Scene/Animator.hpp>
 #include <Physics/AABB.hpp>
+#include <Input/Input.hpp>
 #include <SDL3/SDL.h>
 #include <string>
 
@@ -44,29 +45,29 @@ namespace mango_engine {
                 m_animator.PlayAnimation("idle_down"); // 初始朝下站着
             }
             
-            void Update(float deltaTime, const bool* keyStates, const std::vector<GameObject>& others) {
+            void Update(float deltaTime, const std::vector<GameObject>& others) {
                 bool isMoving = false;
                 Utils::Vector2 delta = {0.0f, 0.0f};
 
                 // 优先级判定：先判断垂直，再判断水平，防止同时按出对角线导致方向闪烁
                 if (isPlayer) { // 只有玩家对象才响应输入
-                    if (keyStates[SDL_SCANCODE_W] || keyStates[SDL_SCANCODE_UP]) {
+                    if (Input::Input::IsKeyDown(Input::KeyCode::W) || Input::Input::IsKeyDown(Input::KeyCode::Up)) {
                         delta.y -= speed * deltaTime; 
                         m_direction = Direction::Up; 
                         isMoving = true;
                     } 
-                    else if (keyStates[SDL_SCANCODE_S] || keyStates[SDL_SCANCODE_DOWN]) {
+                    else if (Input::Input::IsKeyDown(Input::KeyCode::S) || Input::Input::IsKeyDown(Input::KeyCode::Down)) {
                         delta.y += speed * deltaTime; 
                         m_direction = Direction::Down; 
                         isMoving = true;
                     }
 
-                    if (keyStates[SDL_SCANCODE_A] || keyStates[SDL_SCANCODE_LEFT]) {
+                    if (Input::Input::IsKeyDown(Input::KeyCode::A) || Input::Input::IsKeyDown(Input::KeyCode::Left)) {
                         delta.x -= speed * deltaTime; 
                         m_direction = Direction::Left; 
                         isMoving = true;
                     } 
-                    else if (keyStates[SDL_SCANCODE_D] || keyStates[SDL_SCANCODE_RIGHT]) {
+                    else if (Input::Input::IsKeyDown(Input::KeyCode::D) || Input::Input::IsKeyDown(Input::KeyCode::Right)) {
                         delta.x += speed * deltaTime; 
                         m_direction = Direction::Right; 
                         isMoving = true;

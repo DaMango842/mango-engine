@@ -8,6 +8,7 @@
 #include <Scene/LevelLoader.hpp>
 #include <Utils/FPSCounter.hpp>
 #include <Scene/Camera.hpp>
+#include <Input/Input.hpp>
 
 namespace mango_engine {
     class Application {
@@ -49,22 +50,36 @@ namespace mango_engine {
 
                 Update(deltaTime);
                 Render();
+
+                Input::Input::Update();
             }
         }
     private:
         void ProcessInput(SDL_Event* event) {
             while (SDL_PollEvent(event)) {
-                if (event->type == SDL_EVENT_QUIT) m_Running = false;
-                if (event->type == SDL_EVENT_KEY_DOWN && event->key.key == SDLK_ESCAPE) m_Running = false;
+                if (event->type == SDL_EVENT_QUIT) {
+                    m_Running = false;
+                }
+                if (event->type == SDL_EVENT_KEY_DOWN) {
+                    if (event->key.key == SDLK_ESCAPE) {
+                        m_Running = false;
+                    }
+
+                    auto key = Input::Input::ConvertSDLKey(event->key.key);
+                    auto action = event->key.repeat ? Input::KeyAction::Repeat : Input::KeyAction::Press;
+                    Input::Input::SetKeyState(key, action);
+                } else if (event->type == SDL_EVENT_KEY_UP) {
+                    auto key = Input::Input::ConvertSDLKey(event->key.key);
+                    Input::Input::SetKeyState(key, Input::KeyAction::Release);
+                }
             }
         }
 
         void Update(float deltaTime) {
             // 游戏逻辑更新
-            const bool* keyStates = SDL_GetKeyboardState(nullptr);
 
             for (auto& obj : m_gameObjects) {
-                obj.Update(deltaTime, keyStates, m_gameObjects);
+                obj.Update(deltaTime, m_gameObjects);
             }
 
             if (!m_gameObjects.empty()) {
