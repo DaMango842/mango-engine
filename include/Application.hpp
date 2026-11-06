@@ -51,7 +51,7 @@ namespace mango_engine {
                 Update(deltaTime);
                 Render();
 
-                Input::Input::Update();
+                Input::Input::EndFrame();
             }
         }
     private:

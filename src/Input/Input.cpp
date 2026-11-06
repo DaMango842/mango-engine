@@ -42,7 +42,7 @@ namespace mango_engine {
             }
         }
 
-        void Input::Update() {
+        void Input::EndFrame() {
             s_PreviousState = s_CurrentState; // 帧末备份
         }
 

@@ -15,7 +15,7 @@ namespace mango_engine {
             static bool IsKeyReleased(KeyCode key); // 这一帧刚刚松开
 
             // 每帧末尾调用，清理上一帧状态
-            static void Update();
+            static void EndFrame();
 
             // 供 Application 调用的底层转换接口
             static KeyCode ConvertSDLKey(int sdlKey);
