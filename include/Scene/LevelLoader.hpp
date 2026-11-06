@@ -30,6 +30,7 @@ namespace mango_engine {
                     
                     GameObject player(Utils::Vector2{px, py}, Utils::Vector2{50.0f, 50.0f}, Renderer::Color{0.0f, 1.0f, 0.0f, 1.0f}, pSpeed);
                     player.isPlayer = true; // 标记为玩家对象
+                    player.isSolid = true;  // 玩家也是一个实体碰撞体
                     if (playerTexture) {
                         player.SetTexture(playerTexture);
                     }
@@ -49,8 +50,11 @@ namespace mango_engine {
                             color.g = enemyData["color"]["g"];
                             color.b = enemyData["color"]["b"];
                             color.a = enemyData["color"]["a"];
-
-                            outObjects.emplace_back(Utils::Vector2{ex, ey}, Utils::Vector2{ew, eh}, color, es);
+                            
+                            bool isSolid = enemyData.value("isSolid", false); // 默认值为 false
+                            GameObject enemy(Utils::Vector2{ex, ey}, Utils::Vector2{ew, eh}, color, es);
+                            enemy.isSolid = isSolid;  // 根据 JSON 值设置碰撞属性
+                            outObjects.push_back(enemy);
                         }
                     }
 

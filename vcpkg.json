@@ -1,0 +1,10 @@
+{
+    "name": "mango-engine",
+    "version": "0.1.0",
+    "dependencies": [
+        "sdl3",
+        "sdl3-ttf",
+        "sdl3-image",
+        "sdl3-mixer"
+    ]
+}

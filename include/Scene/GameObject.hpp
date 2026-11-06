@@ -4,6 +4,7 @@
 #include <Renderer/IRenderer.hpp>
 #include <Resource/Texture.hpp>
 #include <Scene/Animator.hpp>
+#include <Physics/AABB.hpp>
 #include <SDL3/SDL.h>
 #include <string>
 
@@ -43,32 +44,37 @@ namespace mango_engine {
                 m_animator.PlayAnimation("idle_down"); // 初始朝下站着
             }
             
-            void Update(float deltaTime, const bool* keyStates) {
+            void Update(float deltaTime, const bool* keyStates, const std::vector<GameObject>& others) {
                 bool isMoving = false;
+                Utils::Vector2 delta = {0.0f, 0.0f};
 
                 // 优先级判定：先判断垂直，再判断水平，防止同时按出对角线导致方向闪烁
                 if (isPlayer) { // 只有玩家对象才响应输入
                     if (keyStates[SDL_SCANCODE_W] || keyStates[SDL_SCANCODE_UP]) {
-                        m_position.y -= speed * deltaTime; 
+                        delta.y -= speed * deltaTime; 
                         m_direction = Direction::Up; 
                         isMoving = true;
                     } 
                     else if (keyStates[SDL_SCANCODE_S] || keyStates[SDL_SCANCODE_DOWN]) {
-                        m_position.y += speed * deltaTime; 
+                        delta.y += speed * deltaTime; 
                         m_direction = Direction::Down; 
                         isMoving = true;
                     }
 
                     if (keyStates[SDL_SCANCODE_A] || keyStates[SDL_SCANCODE_LEFT]) {
-                        m_position.x -= speed * deltaTime; 
+                        delta.x -= speed * deltaTime; 
                         m_direction = Direction::Left; 
                         isMoving = true;
                     } 
                     else if (keyStates[SDL_SCANCODE_D] || keyStates[SDL_SCANCODE_RIGHT]) {
-                        m_position.x += speed * deltaTime; 
+                        delta.x += speed * deltaTime; 
                         m_direction = Direction::Right; 
                         isMoving = true;
                     }
+                }
+
+                if (isMoving) {
+                    TryMove(delta, others);
                 }
 
                 // 【核心】根据移动状态 + 当前方向，拼接动画名字
@@ -118,12 +124,45 @@ namespace mango_engine {
             void SetSize(const Utils::Vector2& sz) { m_size = sz; }
             Utils::Vector2 GetSize() const { return m_size; }
 
-            
+            Physics::AABB GetAABB() const {
+                return Physics::AABB(m_position, { m_position.x + m_size.x, m_position.y + m_size.y });
+            }
+
+            void TryMove(const Utils::Vector2& delta, const std::vector<GameObject>& others) {
+                if (!isPlayer) return;
+
+                Utils::Vector2 nextPosX = { m_position.x + delta.x, m_position.y };
+                Physics::AABB nextAABBX = Physics::AABB(nextPosX, { nextPosX.x + m_size.x, nextPosX.y + m_size.y });
+
+                bool collideX = false;
+                for (const auto& other : others) {
+                    if (&other == this || !other.isSolid) continue;
+                    if (nextAABBX.Intersects(other.GetAABB())) {
+                        collideX = true;
+                        break;
+                    }
+                }
+                if (!collideX) m_position.x += delta.x;
+
+                Utils::Vector2 nextPosY = { m_position.x, m_position.y + delta.y };
+                Physics::AABB nextAABBY = Physics::AABB(nextPosY, { nextPosY.x + m_size.x, nextPosY.y + m_size.y });
+
+                bool collideY = false;
+                for (const auto& other : others) {
+                    if (&other == this || !other.isSolid) continue;
+                    if (nextAABBY.Intersects(other.GetAABB())) {
+                        collideY = true;
+                        break;
+                    }
+                }
+                if (!collideY) m_position.y += delta.y;
+             }
             
             
             
         public:
             bool isPlayer = false; // 【新增】标记是否为玩家对象
+            bool isSolid = false;  // 【新增】标记是否为实体碰撞体
 
         private:
             Resource::Texture::Ptr m_texture{nullptr};

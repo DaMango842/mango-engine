@@ -64,7 +64,7 @@ namespace mango_engine {
             const bool* keyStates = SDL_GetKeyboardState(nullptr);
 
             for (auto& obj : m_gameObjects) {
-                obj.Update(deltaTime, keyStates);
+                obj.Update(deltaTime, keyStates, m_gameObjects);
             }
 
             if (!m_gameObjects.empty()) {
