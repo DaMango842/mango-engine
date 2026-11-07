@@ -22,6 +22,8 @@ namespace mango_engine {
             void beginFrame() override;
             void endFrame() override;
 
+            void SetVSync(bool enabled) override;
+
             void clear(const Color& color) override;
 
             void drawTexture(const Resource::Texture::Ptr& texture, const Utils::Vector2& position,

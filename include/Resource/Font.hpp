@@ -17,6 +17,8 @@ namespace mango_engine {
 
 		class Font {
 		public:
+			using Ptr = std::shared_ptr<Font>;
+			
 			Font(const std::string& fontPath, int size = 20);
 			~Font() = default;
 

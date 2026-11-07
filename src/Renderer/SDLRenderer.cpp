@@ -38,6 +38,13 @@ namespace mango_engine {
             SDL_RenderPresent(m_renderer);
         }
 
+        void SDLRenderer::SetVSync(bool enabled)
+        {
+            if (m_renderer) {
+                SDL_SetRenderVSync(m_renderer, enabled ? 1 : 0);
+            }
+        }
+
         void SDLRenderer::clear(const Color& color) {
             if (!m_renderer) return;
             SDL_SetRenderDrawColor(m_renderer, 
@@ -109,7 +116,7 @@ namespace mango_engine {
                 }
 
                 if (rotation != 0.0f) {
-                    SDL_FPoint center = { static_cast<int>(dstRect.w / 2), static_cast<int>(dstRect.h / 2) };
+                    SDL_FPoint center = { static_cast<float>(dstRect.w / 2), static_cast<float>(dstRect.h / 2) };
                     SDL_RenderTextureRotated(m_renderer, texture->GetRaw(), clip, &dstRect, rotation, &center, SDL_FLIP_NONE);
                 } else {
                     SDL_RenderTexture(m_renderer, texture->GetRaw(), clip, &dstRect); 

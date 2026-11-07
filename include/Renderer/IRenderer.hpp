@@ -21,6 +21,8 @@ namespace mango_engine {
             virtual void beginFrame() = 0;
             virtual void endFrame() = 0;
 
+            virtual void SetVSync(bool enabled) = 0;
+
             virtual void clear(const Color& color) = 0;
 
             // 2D 渲染接口
