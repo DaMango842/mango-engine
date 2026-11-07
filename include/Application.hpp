@@ -9,6 +9,8 @@
 #include <Utils/FPSCounter.hpp>
 #include <Scene/Camera.hpp>
 #include <Input/Input.hpp>
+#include <Audio/MangoAudio.hpp>
+#include <Loader/AudioLoader.hpp>
 
 namespace mango_engine {
     class Application {
@@ -16,6 +18,8 @@ namespace mango_engine {
         Application() {
             m_window = make_sdl_window("Mango Engine", 800, 600, SDL_WINDOW_RESIZABLE);
             m_renderer.init(m_window.get());
+
+            Loader::AudioLoader::Init(m_audio.GetMixer());
 
             InitScene();
         }
@@ -32,6 +36,8 @@ namespace mango_engine {
             if (!Scene::LevelLoader::LoadLevel("assets/level.json", m_gameObjects, playerTex)) {
                 SDL_Log("Failed to load level!");
             }
+
+            m_testSound = Loader::AudioLoader::Load("assets/audio/test.wav");
         }
 
         void Run() {
@@ -85,6 +91,15 @@ namespace mango_engine {
             if (!m_gameObjects.empty()) {
                 m_camera.Follow(m_gameObjects[0].GetPosition(), deltaTime);
             }
+
+            if (Input::Input::IsKeyPressed(Input::KeyCode::Space)) {
+                if (m_testSound) {
+                    m_audio.PlayOneShot(m_testSound);
+                    SDL_Log("Playing sound!");
+                } else {
+                    SDL_Log("m_testSound is null!");
+                }
+            }
             
         }
 
@@ -111,8 +126,10 @@ namespace mango_engine {
         // decltype(make_sdl_renderer(nullptr, nullptr)) m_renderer;
         Renderer::SDLRenderer m_renderer;
 
+        Audio::MangoAudio m_audio;
+        Audio::AudioBuffer::Ptr m_testSound;
+
         Utils::FPSCounter m_fpsCounter;
-        
         Scene::Camera m_camera{ 800.0f, 600.0f };
         std::vector<Scene::GameObject> m_gameObjects; // 游戏对象列表
 
